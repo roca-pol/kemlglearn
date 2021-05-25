@@ -72,7 +72,7 @@ class KernelKMeans(BaseEstimator, ClusterMixin):
         dist = np.zeros((n_samples, self.n_clusters))
         self.within_distances_ = np.zeros(self.n_clusters)
 
-        for it in xrange(self.max_iter):
+        for it in range(self.max_iter):
             dist.fill(0)
             self._compute_dist(K, dist, self.within_distances_,
                                update_within=True)
@@ -96,7 +96,7 @@ class KernelKMeans(BaseEstimator, ClusterMixin):
         kernel trick."""
         sw = self.sample_weight_
 
-        for j in xrange(self.n_clusters):
+        for j in range(self.n_clusters):
             mask = self.labels_ == j
 
             if np.sum(mask) == 0:
