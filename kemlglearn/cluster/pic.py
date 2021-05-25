@@ -3,6 +3,7 @@ from sklearn.cluster import KMeans
 from sklearn.base import ClusterMixin, BaseEstimator
 from sklearn.metrics.pairwise import pairwise_kernels
 from sklearn.utils.validation import check_random_state
+from scipy.sparse import spdiags, issparse
 
 
 class PIC(ClusterMixin, BaseEstimator):
@@ -81,7 +82,13 @@ class PIC(ClusterMixin, BaseEstimator):
         # normalize
         D = A.sum(axis=1)
         D_inv = np.reciprocal(D)
-        W = D_inv.reshape(-1, 1) * A  # same as multiplying D_inv @ A
-
+        if issparse(A):
+            D_inv = spdiags(D_inv.reshape(1, -1), 0, len(D_inv), len(D_inv))
+            W = D_inv @ A
+        else:
+            # same as multiplying D_inv @ A
+            # but we can broadcast which is faster
+            W = D_inv.reshape(-1, 1) * A
+            
         v0 = D / D.sum()
         return W, v0
