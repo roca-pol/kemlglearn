@@ -63,7 +63,7 @@ class KernelKMeans(BaseEstimator, ClusterMixin):
 
         K = self._get_kernel(X)
 
-        sw = sample_weight if sample_weight else np.ones(n_samples)
+        sw = sample_weight or np.ones(n_samples)
         self.sample_weight_ = sw
 
         rs = check_random_state(self.random_state)

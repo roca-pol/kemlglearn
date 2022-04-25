@@ -57,9 +57,8 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         """
         if self.distance_ == 'precomputed':
             raise NameError('For precomputed distance use fit_predict')
-        else:
-            self._fit_process(X)
-            return self
+        self._fit_process(X)
+        return self
 
     def fit_predict(self, X):
         """
@@ -82,10 +81,12 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         if self.distance_ == 'precomputed':
             raise NameError('Cannot predict for new data with precomputed distance')
         else:
-            clasif = []
-            for i in range(X.shape[0]):
-                clasif.append(np.argmin(self.distance_(X[i].reshape(1, -1), self.cluster_medoids_)))
-            return clasif
+            return [
+                np.argmin(
+                    self.distance_(X[i].reshape(1, -1), self.cluster_medoids_)
+                )
+                for i in range(X.shape[0])
+            ]
 
     def _fit_process(self, X):
         """
@@ -112,7 +113,7 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         for j in range(self.nexamp_):
             assignments[j] = self._find_nearest_medoid(j, medoids)
 
-        for i in range(self.max_iter_):
+        for _ in range(self.max_iter_):
             new_medoids = self._kmedoids_iter(assignments)
 
             if np.array_equal(new_medoids, medoids):
@@ -137,7 +138,7 @@ class KMedoidsFlexible(BaseEstimator, ClusterMixin, TransformerMixin):
         :param medoids:
         :return:
         """
-        lassign = [[] for i in range(self.nclusters_)]
+        lassign = [[] for _ in range(self.nclusters_)]
         for i in range(self.nexamp_):
             lassign[assignments[i]].append(i)
 

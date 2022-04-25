@@ -69,10 +69,9 @@ class LaplacianScore():
         """
         if self.scores_ is None:
             raise Exception('Laplacian Score: Not fitted')
-        else:
-            l = list(enumerate(self.scores_))
-            l = sorted(l, key=itemgetter(1), reverse=True)
-            return [l[i][0] for i in range(k)]
+        l = list(enumerate(self.scores_))
+        l = sorted(l, key=itemgetter(1), reverse=True)
+        return [l[i][0] for i in range(k)]
 
     def fit_transform(self, X):
         """

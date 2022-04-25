@@ -33,10 +33,7 @@ def maplabels(labels):
     :param labels:
     :return:
     """
-    poslabels = {}
-    for lab, p in zip(labels,range(len(labels))):
-        poslabels[lab] = p
-    return poslabels
+    return dict(zip(labels,range(len(labels))))
 
 def scatter_matrices_scores(X, labels, indices=['CH']):
     """
@@ -284,11 +281,14 @@ def davies_bouldin_score(X, labels):
     # Compute the index
     dist = 0.0
     for idxi in llabels:
-        lvals = []
         disti = mdcentroid[poslabels[idxi]]
-        for idxj in llabels:
-            if idxj != idxi:
-                lvals.append((disti + mdcentroid[poslabels[idxj]])/cdistances[poslabels[idxi], poslabels[idxj]])
+        lvals = [
+            (disti + mdcentroid[poslabels[idxj]])
+            / cdistances[poslabels[idxi], poslabels[idxj]]
+            for idxj in llabels
+            if idxj != idxi
+        ]
+
         dist += max(lvals)
 
     return dist/nclust

@@ -24,11 +24,10 @@ import numpy as np
 import pprint
 
 def nested_item(depth, value):
-    if depth <= 1:
-        print(value)
-        return [value]
-    else:
+    if depth > 1:
         return [nested_item(depth - 1, value)]
+    print(value)
+    return [value]
 
 def nested_list(n):
     """Generate a nested list where the i'th item is at depth i."""
@@ -77,22 +76,12 @@ def nested_partitions_distance(p1, p2):
                    len(set1b.intersection(set2a)) +\
                    nested_partitions_distance(p1[0], p2[1]) +\
                    nested_partitions_distance(p1[1], p2[0])
+    elif len(p1) == 1 and len(p2) > 1:
+        return 1 if p1[0] in set(flatten(p2[0])) or p1[0] in set(flatten(p2[1])) else 0
+    elif len(p2) == 1 and len(p1) > 1:
+        return 1 if p2[0] in set(flatten(p1[0])) or p2[0] in set(flatten(p1[1])) else 0
     else:
-        if len(p1) == 1 and len(p2) > 1:
-            if p1[0] in set(flatten(p2[0])) or p1[0] in set(flatten(p2[1])):
-                return 1
-            else:
-                return 0
-        elif len(p2) == 1 and len(p1) > 1:
-            if p2[0] in set(flatten(p1[0])) or p2[0] in set(flatten(p1[1])):
-                return 1
-            else:
-                return 0
-        else:
-            if p1[0] == p2[0]:
-                return 1
-            else:
-                return 0
+        return 1 if p1[0] == p2[0] else 0
 
 
 def nested_partitions_distance2(p1, p2):
@@ -115,22 +104,12 @@ def nested_partitions_distance2(p1, p2):
         else:
             return nested_partitions_distance(p1[0], p2[1]) +\
                    nested_partitions_distance(p1[1], p2[0])
+    elif len(p1) == 1 and len(p2) > 1:
+        return 1 if p1[0] in set(flatten(p2[0])) or p1[0] in set(flatten(p2[1])) else 0
+    elif len(p2) == 1 and len(p1) > 1:
+        return 1 if p2[0] in set(flatten(p1[0])) or p2[0] in set(flatten(p1[1])) else 0
     else:
-        if len(p1) == 1 and len(p2) > 1:
-            if p1[0] in set(flatten(p2[0])) or p1[0] in set(flatten(p2[1])):
-                return 1
-            else:
-                return 0
-        elif len(p2) == 1 and len(p1) > 1:
-            if p2[0] in set(flatten(p1[0])) or p2[0] in set(flatten(p1[1])):
-                return 1
-            else:
-                return 0
-        else:
-            if p1[0] == p2[0]:
-                return 1
-            else:
-                return 0
+        return 1 if p1[0] == p2[0] else 0
 
 
 def generate_partitions(data):
@@ -142,12 +121,10 @@ def generate_partitions(data):
     """
     if len(data) == 1:
         return data
-    else:
-
-        mask1 = np.random.choice(len(data), np.floor(len(data)/2), replace=False)
-        par1 = [data[i] for i in range(len(data)) if i in mask1]
-        par2 = [data[i] for i in range(len(data)) if i not in mask1]
-        return [generate_partitions(par1), generate_partitions(par2)]
+    mask1 = np.random.choice(len(data), np.floor(len(data)/2), replace=False)
+    par1 = [data[i] for i in range(len(data)) if i in mask1]
+    par2 = [data[i] for i in range(len(data)) if i not in mask1]
+    return [generate_partitions(par1), generate_partitions(par2)]
 
 def print_nested(l,p):
     if len(l) == 1:
