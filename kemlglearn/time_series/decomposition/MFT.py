@@ -63,15 +63,11 @@ def mft(series, sampling, ncoef, wsize, butfirst=False):
     for w in range(1, nwindows):
         coef[w] = dcoef * (coef[w - 1] + (series[wsize + (w - 1)] - series[w - 1]))
 
-    if butfirst:
-        return coef[:, 1:]
-    else:
-        return coef
+    return coef[:, 1:] if butfirst else coef
 
 
 
-if __name__ == '__main__':
-    pass
+pass
     # itime = time.time()
     # coef1 = mft(signal, sampling=10, ncoef=15, wsize=32)
     # ftime = time.time()

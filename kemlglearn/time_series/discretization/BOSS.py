@@ -36,14 +36,10 @@ def boss_distance(histo1, histo2):
     :param histo2:
     :return:
     """
-    val = 0
-    for w in histo1:
-        if w in histo2:
-            val += (histo1[w] - histo2[w]) ** 2
-        else:
-            val += histo1[w] * histo1[w]
-
-    return val
+    return sum(
+        (histo1[w] - histo2[w]) ** 2 if w in histo2 else histo1[w] * histo1[w]
+        for w in histo1
+    )
 
 
 def euclidean_distance(histo1, histo2):
@@ -160,9 +156,7 @@ class Boss():
             coefs = mft(self.series[s], self.sampling, ncoef, wsize, butfirst=self.butfirst)
             lcoefs = []
             for i in range(coefs.shape[1]):
-                lcoefs.append(coefs[:, i].real)
-                lcoefs.append(coefs[:, i].imag)
-
+                lcoefs.extend((coefs[:, i].real, coefs[:, i].imag))
             all_coefs.append(np.stack(lcoefs, axis=-1))
             self.coefs[s] = all_coefs[-1]
 
@@ -185,10 +179,7 @@ class Boss():
             :param v:
             :return:
             """
-            w = ''
-            for v in vec:
-                w += vocabulary[int(v)]
-            return w
+            return ''.join(vocabulary[int(v)] for v in vec)
 
         for c in self.coefs:
             sdisc = self.disc.transform(self.coefs[c], copy=True).real
@@ -203,8 +194,7 @@ class Boss():
             # print(c, self.codes[c])
 
 
-if __name__ == '__main__':
-    pass
+pass
     # wlen = 64
     # voclen = 3
     # ncoefs = 3

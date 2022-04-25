@@ -67,7 +67,7 @@ def numpy_smoothing(x, window_len=11, window='hanning'):
     if window_len < 3:
         return x
 
-    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+    if window not in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
         raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
 
     s = np.r_[x[window_len - 1:0:-1], x, x[-1:-window_len:-1]]
@@ -75,7 +75,7 @@ def numpy_smoothing(x, window_len=11, window='hanning'):
     if window == 'flat':  # moving average
         w = np.ones(window_len, 'd')
     else:
-        w = eval('np.' + window + '(window_len)')
+        w = eval(f'np.{window}(window_len)')
 
     y = np.convolve(w / w.sum(), s, mode='valid')
     return y[int(window_len / 2):int(-window_len / 2) + 1]
@@ -106,7 +106,7 @@ def ALS_smoothing(y, lam, p, niter=10):
     L = len(y)
     D = sparse.csc_matrix(np.diff(np.eye(L), 2))
     w = np.ones(L)
-    for i in range(niter):
+    for _ in range(niter):
         W = sparse.spdiags(w, 0, L, L)
         Z = W + lam * D.dot(D.transpose())
         z = spsolve(Z, w * y)
@@ -137,9 +137,7 @@ def tvdiplmax(y):
     DDT = D.dot(D.conj().T)
     Dy = D.dot(y)
 
-    lambdamax = np.absolute(linalg.spsolve(DDT, Dy)).max(0)
-
-    return lambdamax
+    return np.absolute(linalg.spsolve(DDT, Dy)).max(0)
 
 
 def tvdip(y, lambdas, display=1, stoptol=1e-3, maxiter=60):

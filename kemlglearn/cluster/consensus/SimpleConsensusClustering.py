@@ -92,10 +92,17 @@ class SimpleConsensusClustering(BaseEstimator, ClusterMixin, TransformerMixin):
         :param X:
         :return:
         """
-        clabels = Parallel(n_jobs=-1)(delayed(self._process_components)(
-            self.n_clusters_base if self.ncb_rand else randint(2, self.n_clusters_base + 1),
-            self.base,
-            X) for i in range(self.n_components))
+        clabels = Parallel(n_jobs=-1)(
+            delayed(self._process_components)(
+                self.n_clusters_base
+                if self.ncb_rand
+                else randint(2, self.n_clusters_base + 1),
+                self.base,
+                X,
+            )
+            for _ in range(self.n_components)
+        )
+
 
         coin_matrix = np.zeros((X.shape[0], X.shape[0]))
         for l in clabels:

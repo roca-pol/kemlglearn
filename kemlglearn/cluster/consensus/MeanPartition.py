@@ -52,7 +52,7 @@ class MeanPartitionClustering(BaseEstimator, ClusterMixin, TransformerMixin):
             km = KMeans(n_clusters=self.n_clusters, n_init=1)
         l = ['r']
 
-        for i in range(self.n_components):
+        for _ in range(self.n_components):
             km.fit(X)
             baseclust.append(km.labels_)
             l.append('b')

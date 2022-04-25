@@ -208,8 +208,10 @@ def k_prototypes(X, n_clusters, gamma, init, n_init, max_iter, verbose):
             converged = (moves == 0) or (ncost >= cost)
             cost = ncost
             if verbose:
-                print("Run: {}, iteration: {}/{}, moves: {}, ncost: {}"
-                      .format(init_no + 1, itr, max_iter, moves, ncost))
+                print(
+                    f"Run: {init_no + 1}, iteration: {itr}/{max_iter}, moves: {moves}, ncost: {ncost}"
+                )
+
 
         # Store results of current run.
         all_centroids.append(centroids)
@@ -218,7 +220,7 @@ def k_prototypes(X, n_clusters, gamma, init, n_init, max_iter, verbose):
 
     best = np.argmin(all_costs)
     if n_init > 1 and verbose:
-        print("Best run was number {}".format(best + 1))
+        print(f"Best run was number {best + 1}")
 
     # Note: return gamma in case it was automatically determined.
     return all_centroids[best], all_labels[best], all_costs[best], gamma

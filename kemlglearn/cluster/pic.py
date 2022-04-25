@@ -143,11 +143,7 @@ class PIC(ClusterMixin, BaseEstimator):
         X = self._validate_data(X, accept_sparse=['csr', 'csc', 'coo'],
                                 dtype=np.float64, ensure_min_samples=2)
 
-        if self.eps == 'auto':
-            eps = 1e-5 / X.shape[0]
-        else:
-            eps = self.eps
-
+        eps = 1e-5 / X.shape[0] if self.eps == 'auto' else self.eps
         random_state = check_random_state(self.random_state)
         if self.init == 'degree':
             W, v = self._compute_norm_affinity_mat(X, return_degree=True)
@@ -156,7 +152,7 @@ class PIC(ClusterMixin, BaseEstimator):
             v = random_state.random(size=W.shape[0])
 
         delta = 1e3  # force 2 iterations at minimum
-        
+
         # perform power iteartion
         for i in range(self.max_iter):
             v_old = v
@@ -168,7 +164,7 @@ class PIC(ClusterMixin, BaseEstimator):
 
             if np.all(np.abs(delta - delta_old) < eps):
                 break
-        
+
         # cluster the one dimensional embedded space
         kmeans = KMeans(n_clusters=self.n_clusters,
                         n_init=self.n_init,

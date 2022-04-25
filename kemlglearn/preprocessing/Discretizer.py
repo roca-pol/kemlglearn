@@ -96,11 +96,7 @@ class Discretizer(TransformerMixin):
         """
         if self.intervals is None:
             raise Exception('Discretizer: Not fitted')
-        if copy:
-            Y = X.copy()
-        else:
-            Y = X
-
+        Y = X.copy() if copy else X
         self.__transform(Y)
 
         return Y

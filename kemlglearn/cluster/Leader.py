@@ -78,13 +78,12 @@ class Leader(BaseEstimator, ClusterMixin, TransformerMixin):
         :param X:
         :return:
         """
-        assignments = []
         scenters = np.zeros((1, X.shape[1]))
         centers = np.zeros((1, X.shape[1]))
         # Initialize with the first example
         scenters[0] = X[0]
         centers[0] = X[0]
-        assignments.append([0])
+        assignments = [[0]]
         csizes = np.array([1])
         # Cluster the rest of examples
         for i in range(1, X.shape[0]):

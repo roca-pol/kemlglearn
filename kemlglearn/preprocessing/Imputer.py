@@ -69,12 +69,11 @@ class KnnImputer(TransformerMixin):
         l_no_miss_ex = []
         self.miss_ind_ = []
         for row in range(X.shape[0]):
-            l_miss_att = []
-            for column in range(X.shape[1]):
-                if np.isnan(X[row, column]) or  X[row, column] ==self.miss_val:
-                    l_miss_att.append(column)
-
-            if l_miss_att:
+            if l_miss_att := [
+                column
+                for column in range(X.shape[1])
+                if np.isnan(X[row, column]) or X[row, column] == self.miss_val
+            ]:
                 l_miss_ex.append((row, l_miss_att))
                 self.miss_ind_.append(row)
             else:
@@ -82,19 +81,18 @@ class KnnImputer(TransformerMixin):
 
         if not l_no_miss_ex:
             raise Exception('KnnImputer: All examples have missing values')
-        else:
-            nomiss = X[l_no_miss_ex]
-            if nomiss.shape[0] < self.neigh:
-                raise Exception('KnnImputer: Not enough examples without missings')
-            for ex, att in l_miss_ex:
-                l_sel = [s for s in range(X.shape[1]) if s not in att]
-                knn = NearestNeighbors(n_neighbors=self.neigh, metric=self.dist)
-                knn.fit(nomiss[:, l_sel])
+        nomiss = X[l_no_miss_ex]
+        if nomiss.shape[0] < self.neigh:
+            raise Exception('KnnImputer: Not enough examples without missings')
+        for ex, att in l_miss_ex:
+            l_sel = [s for s in range(X.shape[1]) if s not in att]
+            knn = NearestNeighbors(n_neighbors=self.neigh, metric=self.dist)
+            knn.fit(nomiss[:, l_sel])
 
-                l_neigh = knn.kneighbors(X[ex][l_sel].reshape(1, -1), return_distance=False)[0]
-                for a in att:
-                    l_mean = nomiss[l_neigh, a]
-                    X[ex][a] = np.mean(l_mean)
+            l_neigh = knn.kneighbors(X[ex][l_sel].reshape(1, -1), return_distance=False)[0]
+            for a in att:
+                l_mean = nomiss[l_neigh, a]
+                X[ex][a] = np.mean(l_mean)
         return X
 
     def fit_transform(self, X, copy=True):
@@ -105,11 +103,7 @@ class KnnImputer(TransformerMixin):
         :param bool copy: If True returns a copy of the data
         :return:
         """
-        if copy:
-            y = X.copy()
-        else:
-            y = X
-
+        y = X.copy() if copy else X
         self._transform(y)
 
         return y
@@ -121,7 +115,7 @@ if __name__ == '__main__':
     data = np.random.multivariate_normal(mean, cov, 200)
     vals = np.random.choice(200, size=20, replace=False)
 
-    for v in vals[0:20]:
+    for v in vals[:20]:
         data[v][0] = np.nan
 
     kimp = KnnImputer(n_neighbors=2)

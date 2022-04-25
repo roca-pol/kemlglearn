@@ -53,12 +53,7 @@ def QiuCaoBorder(X, n_neighbors, boundary_ratio, filter_ratio):
     eps1 = sorted(Xsym, reverse=True)[int(boundary_ratio*X.shape[0])]
     eps2 = sorted(Filter, reverse=True)[int(filter_ratio*X.shape[0])]
 
-    border = []
-    for i in range(X.shape[0]):
-        if Xsym[i] > eps1 and Filter[i] < eps2:
-            border.append(i)
-
-    return border
+    return [i for i in range(X.shape[0]) if Xsym[i] > eps1 and Filter[i] < eps2]
 
 if __name__ == '__main__':
     from sklearn.datasets import make_blobs, load_iris, make_circles

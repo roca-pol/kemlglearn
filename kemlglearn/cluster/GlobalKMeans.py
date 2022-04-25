@@ -116,7 +116,7 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
 
         # Compute the centroid of the dataset
         centroids = sum(X) / X.shape[0]
-        assignments = [0 for i in range(X.shape[0])]
+        assignments = [0 for _ in range(X.shape[0])]
 
         centroids.shape = (1, X.shape[1])
 
@@ -164,21 +164,14 @@ class GlobalKMeans(BaseEstimator, ClusterMixin, TransformerMixin):
         # Compute examples for the new centroid
         S2 = []
         newDist = euclidean_distances(X, candCentroid.reshape(1, -1), squared=True)
-        for i in range(X.shape[0]):
-            if newDist[i] < mindist[i]:
-                S2.append(i)
-
+        S2.extend(i for i in range(X.shape[0]) if newDist[i] < mindist[i])
         newCentroid = sum(X[S2]) / len(S2)
         newCentroid.shape = (1, X.shape[1])
 
         while not (candCentroid == newCentroid).all():
             candCentroid = newCentroid
-            S2 = []
             newDist = euclidean_distances(X, candCentroid.reshape(1, -1), squared=True)
-            for i in range(X.shape[0]):
-                if newDist[i] < mindist[i]:
-                    S2.append(i)
-
+            S2 = [i for i in range(X.shape[0]) if newDist[i] < mindist[i]]
             newCentroid = np.sum(X[S2], axis=0) / len(S2)
             newCentroid.shape = (1, X.shape[1])
 
